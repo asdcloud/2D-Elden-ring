@@ -17,12 +17,17 @@ public class Player_control : MonoBehaviour {
     public float checkRadius;
     public LayerMask whatIsGround;
 
+    public Animator animator;
+
 
     void Start(){
         rb = GetComponent<Rigidbody2D>();
     }
     void FixedUpdate() {
         moveInput = Input.GetAxisRaw("Horizontal");
+
+        animator.SetFloat("Horizontal_Speed", Mathf.Abs(moveInput));
+
         if (moveInput != 0) {
             transform.localScale = new Vector2(moveInput, 1);
         }
@@ -32,20 +37,24 @@ public class Player_control : MonoBehaviour {
     void Update() {
         isGrounded = Physics2D.OverlapCircle(feetPos.position, checkRadius, whatIsGround);
 
-        if(isGrounded == true && Input.GetButtonDown("Jump")) {
+        if(isGrounded == true && Input.GetButtonDown("Player_Jump")) {
             isJumping = true;
             jumpTimeCounter = jumpTime; 
             rb.velocity = Vector2.up * jumpForce;
+            print("JUMP");
         }
-        if(Input.GetButton("Jump") && isJumping == true) {
+        if(Input.GetButton("Player_Jump") && isJumping == true) {
             if(jumpTimeCounter > 0) {
                 rb.velocity = Vector2.up * jumpForce;
                 jumpTimeCounter -= Time.deltaTime;
+                print("WHAT");
             } else {
                 isJumping = false;
+                print("WHAT");
             }
         }
-        if(Input.GetButtonUp("Jump")) {
+        if(Input.GetButtonUp("Player_Jump")) {
+            print("False");
             isJumping = false;
         }
     }
