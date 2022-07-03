@@ -7,9 +7,6 @@ public class Player_control : MonoBehaviour {
     private Rigidbody2D rb;
     public float speed;
     public float jumpForce;
-    private float jumpTimeCounter;
-    public float jumpTime;
-    private bool isJumping;
 
     private float moveInput;
     private bool isGrounded;
@@ -37,25 +34,16 @@ public class Player_control : MonoBehaviour {
     void Update() {
         isGrounded = Physics2D.OverlapCircle(feetPos.position, checkRadius, whatIsGround);
 
-        if(isGrounded == true && Input.GetButtonDown("Player_Jump")) {
-            isJumping = true;
-            jumpTimeCounter = jumpTime; 
-            rb.velocity = Vector2.up * jumpForce;
-            print("JUMP");
-        }
-        if(Input.GetButton("Player_Jump") && isJumping == true) {
-            if(jumpTimeCounter > 0) {
+        //if(isGrounded == true && Input.GetButtonDown("Player_Jump")) {
+        //    rb.velocity = Vector2.up * jumpForce;
+        //}
+
+        if(isGrounded) {
+            animator.SetBool("IsCrouching", Input.GetButton("Player_crouch"));
+            
+            if(Input.GetButtonDown("Player_Jump") && (Input.GetButton("Player_crouch") == false)) {
                 rb.velocity = Vector2.up * jumpForce;
-                jumpTimeCounter -= Time.deltaTime;
-                print("WHAT");
-            } else {
-                isJumping = false;
-                print("WHAT");
             }
-        }
-        if(Input.GetButtonUp("Player_Jump")) {
-            print("False");
-            isJumping = false;
         }
     }
 }
