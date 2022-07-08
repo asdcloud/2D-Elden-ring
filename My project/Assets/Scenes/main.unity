@@ -294,9 +294,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 20
   jumpForce: 60
-  jumpTime: 0
   feetPos: {fileID: 705814051}
-  checkRadius: 1
+  checkRadius: 0.5
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
