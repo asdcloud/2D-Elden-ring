@@ -17,6 +17,7 @@ public class Player_control : MonoBehaviour {
     public LayerMask whatIsGround;
 
     public Animator animator;
+    public float jumpdelay;
 
 
     void Start(){
@@ -67,13 +68,18 @@ public class Player_control : MonoBehaviour {
 
         //限制在地板上才能完成的動作
         if (isGrounded) {//在地板上時
+            animator.SetBool("isGrounded", isGrounded);
             animator.SetBool("IsCrouching", isCrouching);
             animator.SetBool("IsJumping", isJumping);
             animator.SetFloat("Horizontal_Speed", Mathf.Abs(moveInput));
             if(isJumping && (isCrouching == false)) {
-                rb.velocity = Vector2.up * jumpForce;
-                print("jump");
+                StartCoroutine(Jump());
             }
         }
+    }
+
+    private IEnumerator Jump () {
+        yield return new WaitForSeconds(jumpdelay);
+        rb.velocity = Vector2.up * jumpForce;
     }
 }

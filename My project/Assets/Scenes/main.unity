@@ -300,6 +300,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   animator: {fileID: 352505799}
+  jumpdelay: 0.1
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
