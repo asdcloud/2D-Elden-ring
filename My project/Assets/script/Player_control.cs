@@ -15,7 +15,7 @@ public class Player_control : MonoBehaviour {
     public Transform feetPos;
     public float checkRadius;
     public LayerMask whatIsGround;
-
+    public bool animationlock;
     public Animator animator;
     public float jumpdelay;
 
@@ -25,61 +25,43 @@ public class Player_control : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        moveInput = Input.GetAxisRaw("Horizontal");
+        moveInput = Input.GetAxisRaw("Horizontal");//偵測玩家鍵盤輸入
         isGrounded = Physics2D.OverlapCircle(feetPos.position, checkRadius, whatIsGround);
         isJumping = Input.GetButton("Player_Jump");
         isCrouching = Input.GetButton("Player_crouch");
         Move(isGrounded, isCrouching, isJumping, moveInput);
-
-        /*moveInput = Input.GetAxisRaw("Horizontal");
-
-        animator.SetFloat("Horizontal_Speed", Mathf.Abs(moveInput));
-
-        if (moveInput != 0) {
-            transform.localScale = new Vector2(moveInput, 1);
-        }
-        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
-        */
-
-
-
-
     }
 
-    void Update() {
-        /*
-        isGrounded = Physics2D.OverlapCircle(feetPos.position, checkRadius, whatIsGround);
-        if(isGrounded) {
-            animator.SetBool("IsCrouching", Input.GetButton("Player_crouch"));
-            
-            if(Input.GetButtonDown("Player_Jump") && (Input.GetButton("Player_crouch") == false)) {
-                rb.velocity = Vector2.up * jumpForce;
-            }
-        }
-        */
-    }
     void Move(bool isGrounded, bool isCrouching, bool isJumping, float moveInput) {
 
-        //控制左右面向以及橫向移動速度(優先級1)，在空中時也能達成此指令
+        //控制左右面向以及橫向移動速度，在空中時也能達成此指令
         if (moveInput != 0) {
-            transform.localScale = new Vector2(moveInput, 1);
+            transform.localScale = new Vector2(moveInput, 1);//根據左右移動的方向來改變面向的方向
         }
-        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
+        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);//左右移動速度
 
         //限制在地板上才能完成的動作
         if (isGrounded) {//在地板上時
-            animator.SetBool("isGrounded", isGrounded);
-            animator.SetBool("IsCrouching", isCrouching);
-            animator.SetBool("IsJumping", isJumping);
-            animator.SetFloat("Horizontal_Speed", Mathf.Abs(moveInput));
+            animationcontrol (isCrouching, isJumping, moveInput, animationlock);//使用函式控制動畫播放
             if(isJumping && (isCrouching == false)) {
-                StartCoroutine(Jump());
+                StartCoroutine(Jump());//出現跳躍動作，且將動畫鎖定(在空中時不可變更動畫)
             }
         }
     }
 
     private IEnumerator Jump () {
-        yield return new WaitForSeconds(jumpdelay);
-        rb.velocity = Vector2.up * jumpForce;
+        animationlock = true;//將動畫鎖定
+        yield return new WaitForSeconds(jumpdelay);//在跳躍前的起跳動畫所需的時間
+        rb.velocity = Vector2.up * jumpForce;//實際角色跳躍
+        yield return new WaitForSeconds(0.34f);//在跳躍期間的剩餘動畫時間
+        animationlock = false;//解除動畫鎖定
+    }
+
+    void animationcontrol (bool isCrouching, bool isJumping, float moveInput, bool animationlock) {
+        if (animationlock == false) {//如果沒有將動畫鎖定，則透過改變變數的方式更改動畫
+            animator.SetBool("IsCrouching", isCrouching);
+            animator.SetBool("IsJumping", isJumping);
+            animator.SetFloat("Horizontal_Speed", Mathf.Abs(moveInput));
+        }
     }
 }
