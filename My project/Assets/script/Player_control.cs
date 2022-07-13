@@ -53,7 +53,7 @@ public class Player_control : MonoBehaviour {
         animationlock = true;//將動畫鎖定
         yield return new WaitForSeconds(jumpdelay);//在跳躍前的起跳動畫所需的時間
         rb.velocity = Vector2.up * jumpForce;//實際角色跳躍
-        yield return new WaitForSeconds(0.34f);//在跳躍期間的剩餘動畫時間
+        yield return new WaitForSeconds(0.44f);//在跳躍期間的剩餘動畫時間
         animationlock = false;//解除動畫鎖定
     }
 
