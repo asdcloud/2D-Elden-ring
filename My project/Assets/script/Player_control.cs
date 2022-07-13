@@ -12,12 +12,16 @@ public class Player_control : MonoBehaviour {
     private bool isGrounded;
     private bool isJumping;
     private bool isCrouching;
+    private bool isdashing;
     public Transform feetPos;
     public float checkRadius;
     public LayerMask whatIsGround;
     public bool animationlock;
     public Animator animator;
     public float jumpdelay;
+
+    public float dashspeed;
+
 
 
     void Start(){
@@ -29,10 +33,11 @@ public class Player_control : MonoBehaviour {
         isGrounded = Physics2D.OverlapCircle(feetPos.position, checkRadius, whatIsGround);
         isJumping = Input.GetButton("Player_Jump");
         isCrouching = Input.GetButton("Player_crouch");
-        Move(isGrounded, isCrouching, isJumping, moveInput);
+        isdashing = Input.GetButton("Player_dash");
+        Move(isGrounded, isCrouching, isJumping, isdashing, moveInput);
     }
 
-    void Move(bool isGrounded, bool isCrouching, bool isJumping, float moveInput) {
+    void Move(bool isGrounded, bool isCrouching, bool isJumping, bool isdashing, float moveInput) {
 
         //控制左右面向以及橫向移動速度，在空中時也能達成此指令
         if (moveInput != 0) {
@@ -42,9 +47,11 @@ public class Player_control : MonoBehaviour {
 
         //限制在地板上才能完成的動作
         if (isGrounded) {//在地板上時
-            animationcontrol (isCrouching, isJumping, moveInput, animationlock);//使用函式控制動畫播放
+            animationcontrol (isCrouching, isJumping, moveInput, isdashing, animationlock);//使用函式控制動畫播放
             if(isJumping && (isCrouching == false)) {
                 StartCoroutine(Jump());//出現跳躍動作，且將動畫鎖定(在空中時不可變更動畫)
+            } else if (isdashing) {
+                StartCoroutine(dash());
             }
         }
     }
@@ -57,10 +64,21 @@ public class Player_control : MonoBehaviour {
         animationlock = false;//解除動畫鎖定
     }
 
-    void animationcontrol (bool isCrouching, bool isJumping, float moveInput, bool animationlock) {
+    private IEnumerator dash() {
+        animationlock = true;
+        yield return new WaitForSeconds(0.1f);
+        rb.AddForce(new Vector2(moveInput * dashspeed, 0f));
+        print(moveInput * dashspeed);
+        yield return new WaitForSeconds(0.23f);
+        animationlock = false;
+    }
+
+
+    void animationcontrol (bool isCrouching, bool isJumping, float moveInput, bool isdashing, bool animationlock) {
         if (animationlock == false) {//如果沒有將動畫鎖定，則透過改變變數的方式更改動畫
             animator.SetBool("IsCrouching", isCrouching);
             animator.SetBool("IsJumping", isJumping);
+            animator.SetBool("IsDashing", isdashing);
             animator.SetFloat("Horizontal_Speed", Mathf.Abs(moveInput));
         }
     }

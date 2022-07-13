@@ -302,6 +302,7 @@ MonoBehaviour:
   animationlock: 0
   animator: {fileID: 352505799}
   jumpdelay: 0.1
+  dashspeed: 3000
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
