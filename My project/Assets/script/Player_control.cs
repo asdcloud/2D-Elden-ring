@@ -20,6 +20,8 @@ public class Player_control : MonoBehaviour {
 
     public float jumpdelay;
     public float jumptime;
+    public float jump_cooldown;
+    public bool canjump = true;
 
     public float first_dashspeed;
     public float second_dashspeed;
@@ -61,15 +63,20 @@ public class Player_control : MonoBehaviour {
     }
 
     private IEnumerator Jump () {
-        animator.SetBool("IsJumping", true);
-        yield return new WaitForSeconds(0.001f);
-        animator.SetBool("animationlock", true);
-        //animationlock = true;//將動畫鎖定
-        yield return new WaitForSeconds(jumpdelay);//在跳躍前的起跳動畫所需的時間
-        rb.velocity = Vector2.up * jumpForce;//實際角色跳躍
-        yield return new WaitForSeconds(jumptime);//在跳躍期間的剩餘動畫時間
-        animator.SetBool("animationlock", false);
-        animator.SetBool("IsJumping", false);
+        if (canjump) {
+            canjump = false;
+            animator.SetBool("IsJumping", true);
+            yield return new WaitForSeconds(0.001f);
+            animator.SetBool("animationlock", true);
+            //animationlock = true;//將動畫鎖定
+            yield return new WaitForSeconds(jumpdelay);//在跳躍前的起跳動畫所需的時間
+            rb.velocity = Vector2.up * jumpForce;//實際角色跳躍
+            yield return new WaitForSeconds(jumptime);//在跳躍期間的剩餘動畫時間
+            animator.SetBool("animationlock", false);
+            animator.SetBool("IsJumping", false);
+            yield return new WaitForSeconds(jump_cooldown);
+            canjump = true;
+        }
     }
 
     private IEnumerator dash() {

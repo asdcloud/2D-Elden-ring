@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 20
-  jumpForce: 50
+  jumpForce: 70
   feetPos: {fileID: 705814051}
   checkRadius: 0.5
   whatIsGround:
@@ -302,6 +302,8 @@ MonoBehaviour:
   animator: {fileID: 352505799}
   jumpdelay: 0.2
   jumptime: 0.7
+  jump_cooldown: 1
+  canjump: 1
   first_dashspeed: 7500
   second_dashspeed: 11000
   final_dashspeed: 4000
