@@ -16,11 +16,16 @@ public class Player_control : MonoBehaviour {
     public Transform feetPos;
     public float checkRadius;
     public LayerMask whatIsGround;
-    public bool animationlock;
     public Animator animator;
-    public float jumpdelay;
 
-    public float dashspeed;
+    public float jumpdelay;
+    public float jumptime;
+
+    public float first_dashspeed;
+    public float second_dashspeed;
+    public float final_dashspeed;
+    public bool candash = true;
+    public float dash_cooldown;
 
 
 
@@ -34,20 +39,19 @@ public class Player_control : MonoBehaviour {
         isJumping = Input.GetButton("Player_Jump");
         isCrouching = Input.GetButton("Player_crouch");
         isdashing = Input.GetButton("Player_dash");
-        Move(isGrounded, isCrouching, isJumping, isdashing, moveInput);
+        Move();
     }
 
-    void Move(bool isGrounded, bool isCrouching, bool isJumping, bool isdashing, float moveInput) {
-
+    void Move() {
         //控制左右面向以及橫向移動速度，在空中時也能達成此指令
         if (moveInput != 0) {
             transform.localScale = new Vector2(moveInput, 1);//根據左右移動的方向來改變面向的方向
         }
-        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);//左右移動速度
+        run();
 
         //限制在地板上才能完成的動作
         if (isGrounded) {//在地板上時
-            animationcontrol (isCrouching, isJumping, moveInput, isdashing, animationlock);//使用函式控制動畫播放
+            //animationcontrol (isCrouching, isJumping, moveInput, isdashing, animationlock);//使用函式控制動畫播放
             if(isJumping && (isCrouching == false)) {
                 StartCoroutine(Jump());//出現跳躍動作，且將動畫鎖定(在空中時不可變更動畫)
             } else if (isdashing) {
@@ -57,29 +61,49 @@ public class Player_control : MonoBehaviour {
     }
 
     private IEnumerator Jump () {
-        animationlock = true;//將動畫鎖定
+        animator.SetBool("IsJumping", true);
+        yield return new WaitForSeconds(0.001f);
+        animator.SetBool("animationlock", true);
+        //animationlock = true;//將動畫鎖定
         yield return new WaitForSeconds(jumpdelay);//在跳躍前的起跳動畫所需的時間
         rb.velocity = Vector2.up * jumpForce;//實際角色跳躍
-        yield return new WaitForSeconds(0.44f);//在跳躍期間的剩餘動畫時間
-        animationlock = false;//解除動畫鎖定
+        yield return new WaitForSeconds(jumptime);//在跳躍期間的剩餘動畫時間
+        animator.SetBool("animationlock", false);
+        animator.SetBool("IsJumping", false);
     }
 
     private IEnumerator dash() {
-        animationlock = true;
-        yield return new WaitForSeconds(0.1f);
-        rb.AddForce(new Vector2(moveInput * dashspeed, 0f));
-        print(moveInput * dashspeed);
-        yield return new WaitForSeconds(0.23f);
-        animationlock = false;
+        if (candash) {
+            candash = false;
+            animator.SetBool("IsDashing", true);
+            yield return new WaitForSeconds(0.001f);
+            animator.SetBool("animationlock", true);
+            yield return new WaitForSeconds(0.1f);
+            rb.AddForce(new Vector2(moveInput * first_dashspeed, 0f));
+            yield return new WaitForSeconds(0.1f);
+            rb.AddForce(new Vector2(moveInput * second_dashspeed, 0f));
+            yield return new WaitForSeconds(0.1f);
+            rb.AddForce(new Vector2(moveInput * final_dashspeed, 0f));
+            yield return new WaitForSeconds(0.08f);
+            animator.SetBool("animationlock", false);
+            animator.SetBool("IsDashing", false);
+            yield return new WaitForSeconds(dash_cooldown);
+            candash = true;
+        }
+    }
+
+    void run() {
+        animator.SetFloat("Horizontal_Speed", Mathf.Abs(moveInput));
+        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);//左右移動速度
     }
 
 
-    void animationcontrol (bool isCrouching, bool isJumping, float moveInput, bool isdashing, bool animationlock) {
+    /*void animationcontrol (bool isCrouching, bool isJumping, float moveInput, bool isdashing, bool animationlock) {
         if (animationlock == false) {//如果沒有將動畫鎖定，則透過改變變數的方式更改動畫
             animator.SetBool("IsCrouching", isCrouching);
             animator.SetBool("IsJumping", isJumping);
             animator.SetBool("IsDashing", isdashing);
             animator.SetFloat("Horizontal_Speed", Mathf.Abs(moveInput));
         }
-    }
+    }*/
 }

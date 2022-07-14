@@ -299,10 +299,14 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
-  animationlock: 0
   animator: {fileID: 352505799}
-  jumpdelay: 0.1
-  dashspeed: 3000
+  jumpdelay: 0.2
+  jumptime: 0.7
+  first_dashspeed: 7500
+  second_dashspeed: 11000
+  final_dashspeed: 4000
+  candash: 1
+  dash_cooldown: 1
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
