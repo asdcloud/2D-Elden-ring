@@ -202,7 +202,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: dca9aa51b69a91e4aa3694fe77287aa0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cd377b35850b4024d8564592ae67fd54, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 20
-  jumpForce: 70
+  jumpForce: 63
   feetPos: {fileID: 705814051}
   checkRadius: 0.5
   whatIsGround:
@@ -483,7 +483,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 7de405f5870fa814caca7cfc95b9b64b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: aa9d75b337f23524b9cee4a329c45a8c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
