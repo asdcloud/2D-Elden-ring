@@ -49,14 +49,16 @@ public class Player_control : MonoBehaviour {
         if (moveInput != 0) {
             transform.localScale = new Vector2(moveInput, 1);//根據左右移動的方向來改變面向的方向
         }
+
+
         run();
 
         //限制在地板上才能完成的動作
         if (isGrounded) {//在地板上時
-            //animationcontrol (isCrouching, isJumping, moveInput, isdashing, animationlock);//使用函式控制動畫播放
+            StartCoroutine(crouch());
             if(isJumping && (isCrouching == false)) {
                 StartCoroutine(Jump());//出現跳躍動作，且將動畫鎖定(在空中時不可變更動畫)
-            } else if (isdashing) {
+            } else if (isdashing && (isCrouching == false)) {
                 StartCoroutine(dash());
             }
         }
@@ -68,7 +70,6 @@ public class Player_control : MonoBehaviour {
             animator.SetBool("IsJumping", true);
             yield return new WaitForSeconds(0.001f);
             animator.SetBool("animationlock", true);
-            //animationlock = true;//將動畫鎖定
             yield return new WaitForSeconds(jumpdelay);//在跳躍前的起跳動畫所需的時間
             rb.velocity = Vector2.up * jumpForce;//實際角色跳躍
             yield return new WaitForSeconds(jumptime);//在跳躍期間的剩餘動畫時間
@@ -98,6 +99,13 @@ public class Player_control : MonoBehaviour {
             candash = true;
         }
     }
+
+    private IEnumerator crouch() {
+        animator.SetBool("IsCrouching", isCrouching);
+        yield return new WaitForSeconds(0.001f);
+        animator.SetBool("animationlock", isCrouching);
+    }
+
 
     void run() {
         animator.SetFloat("Horizontal_Speed", Mathf.Abs(moveInput));

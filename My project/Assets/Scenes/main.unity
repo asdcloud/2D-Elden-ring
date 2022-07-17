@@ -304,9 +304,9 @@ MonoBehaviour:
   jumptime: 0.7
   jump_cooldown: 1
   canjump: 1
-  first_dashspeed: 7500
-  second_dashspeed: 11000
-  final_dashspeed: 4000
+  first_dashspeed: 10000
+  second_dashspeed: 15000
+  final_dashspeed: 7000
   candash: 1
   dash_cooldown: 1
 --- !u!1 &519420028
