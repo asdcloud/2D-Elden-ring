@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player_control : MonoBehaviour {
 
+    public BoxCollider2D m_col;
     private Rigidbody2D rb;
     public float speed;
     public float jumpForce;
