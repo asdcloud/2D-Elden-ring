@@ -30,18 +30,24 @@ public class Player_control : MonoBehaviour {
     public bool candash = true;
     public float dash_cooldown;
 
+    private bool isAttacking;
+    public Transform attackpoint;
+    public float attack_range = 0.5f;
+    public LayerMask enemy_layer;
 
 
     void Start(){
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void FixedUpdate() {
+    void Update() {
         moveInput = Input.GetAxisRaw("Horizontal");//偵測玩家鍵盤輸入
         isGrounded = Physics2D.OverlapCircle(feetPos.position, checkRadius, whatIsGround);
         isJumping = Input.GetButton("Player_Jump");
         isCrouching = Input.GetButton("Player_crouch");
         isdashing = Input.GetButton("Player_dash");
+        isAttacking = Input.GetButtonDown("Player_attack");
+
         Move();
     }
 
@@ -61,6 +67,8 @@ public class Player_control : MonoBehaviour {
                 StartCoroutine(Jump());//出現跳躍動作，且將動畫鎖定(在空中時不可變更動畫)
             } else if (isdashing && (isCrouching == false)) {
                 StartCoroutine(dash());
+            } else if (isAttacking) {
+                StartCoroutine(attack());
             }
         }
     }
@@ -107,19 +115,31 @@ public class Player_control : MonoBehaviour {
         animator.SetBool("animationlock", isCrouching);
     }
 
+    private IEnumerator attack (){
+        animator.SetBool("IsAttacking", true);
+        yield return new WaitForSeconds(0.001f);
+        animator.SetBool("animationlock", true);
+        yield return new WaitForSeconds(0.2f);
+
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackpoint.position, attack_range, enemy_layer);
+        foreach(Collider2D enemy in hitEnemies) {
+            enemy.GetComponent<Enemy>().take_damage(10);
+        }
+        animator.SetBool("animationlock", false);
+        animator.SetBool("IsAttacking", false);
+    }
+
 
     void run() {
         animator.SetFloat("Horizontal_Speed", Mathf.Abs(moveInput));
         rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);//左右移動速度
     }
 
-
-    /*void animationcontrol (bool isCrouching, bool isJumping, float moveInput, bool isdashing, bool animationlock) {
-        if (animationlock == false) {//如果沒有將動畫鎖定，則透過改變變數的方式更改動畫
-            animator.SetBool("IsCrouching", isCrouching);
-            animator.SetBool("IsJumping", isJumping);
-            animator.SetBool("IsDashing", isdashing);
-            animator.SetFloat("Horizontal_Speed", Mathf.Abs(moveInput));
+    void OnDrawGizmosSelected() {
+        if(attackpoint == null) {
+            return;
         }
-    }*/
+
+        Gizmos.DrawWireSphere(attackpoint.position, attack_range);
+    }
 }
